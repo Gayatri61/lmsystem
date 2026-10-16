@@ -5,7 +5,7 @@ public class Student extends User {
 
 
 
-    public Student() {
+    public Student(int i, String string, String string2) {
     }
 
 }
