@@ -8,10 +8,10 @@ import com.gt.model.Course;
 import com.gt.model.Instructor;
 import com.gt.model.Lesson;
 
-class CourseTest {
+public class CourseTest {
 
     @Test 
-    void lessonCanBeAddedToCourse() {
+    public void lessonCanBeAddedToCourse() {
 
         Instructor instructor = new Instructor(
                 1,

@@ -11,10 +11,10 @@ import com.gt.manager.UserManager;
 import com.gt.model.Student;
 import com.gt.model.User;
 
-class UserManagerTest {
+public class UserManagerTest {
 
     @Test 
-    void userCanBeAdded() throws LMSException {
+    public void userCanBeAdded() throws LMSException {
 
         UserManager manager = UserManager.getInstance();
 
@@ -30,7 +30,7 @@ class UserManagerTest {
     }
 
     @Test
-    void userCanBeFoundById() throws LMSException {
+    public void userCanBeFoundById() throws LMSException {
 
         UserManager manager = UserManager.getInstance();
 
@@ -49,7 +49,7 @@ class UserManagerTest {
     }
 
     @Test
-    void userCanBeFoundByEmail() throws LMSException {
+    public void userCanBeFoundByEmail() throws LMSException {
 
         UserManager manager = UserManager.getInstance();
 
@@ -69,7 +69,7 @@ class UserManagerTest {
     }
 
     @Test
-    void userCanBeRemoved() throws LMSException {
+    public void userCanBeRemoved() throws LMSException {
 
         UserManager manager = UserManager.getInstance();
 
