@@ -5,8 +5,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import com.gt.exception.LMSException;
+import com.gt.filter.CourseFilterStrategy;
 import com.gt.model.Course;
 
 public class CourseManager {
@@ -74,7 +77,96 @@ public class CourseManager {
         return null;
     }
 
-    public List<Course> getAllCourses() {
+public List<Course> getAllCourses() {
         return new ArrayList<>(courses.values());
     }
+
+
+public List<Course> searchCourses(String searchPattern)
+        throws LMSException {
+
+    if (searchPattern == null || searchPattern.isBlank()) {
+        throw new LMSException(
+                "Der Suchbegriff darf nicht leer sein."
+        );
+    }
+
+    List<Course> results = new ArrayList<>();
+
+    try {
+        Pattern pattern = Pattern.compile(
+                searchPattern,
+                Pattern.CASE_INSENSITIVE
+        );
+
+        for (Course course : courses.values()) {
+
+            boolean foundInTitle =
+                    pattern.matcher(
+                            course.getTitle()
+                    ).find();
+
+            boolean foundInDescription =
+                    pattern.matcher(
+                            course.getDescription()
+                    ).find();
+
+            if (foundInTitle || foundInDescription) {
+                results.add(course);
+            }
+        }
+
+    } catch (PatternSyntaxException e) {
+
+        throw new LMSException(
+                "Ungültiger regulärer Ausdruck: "
+                        + searchPattern,
+                e
+        );
+    }
+
+    return results;
+}
+
+public List<Course> filterCourses(
+        CourseFilterStrategy strategy) {
+
+    List<Course> results = new ArrayList<>();
+
+    for (Course course : courses.values()) {
+
+        if (strategy.matches(course)) {
+            results.add(course);
+        }
+    }
+
+    return results;
+}
+
+public class CombinedFilter
+        implements CourseFilterStrategy {
+
+    private final List<CourseFilterStrategy> strategies;
+
+    public CombinedFilter(
+            List<CourseFilterStrategy> strategies) {
+
+        this.strategies = strategies;
+    }
+
+    @Override
+    public boolean matches(Course course) {
+
+        for (CourseFilterStrategy strategy : strategies) {
+
+            if (!strategy.matches(course)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
+
+
 }

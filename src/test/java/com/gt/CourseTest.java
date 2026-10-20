@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import com.gt.enums.CourseCategory;
+import com.gt.enums.DifficultyLevel;
 import com.gt.model.Course;
 import com.gt.model.Instructor;
 import com.gt.model.Lesson;
@@ -20,12 +22,13 @@ public class CourseTest {
                 "Java"
         );
 
-        Course course = new Course(
-                1,
-                "Java Grundlagen",
-                "Einführung in Java",
-                instructor
-        );
+    Course course = new Course(
+            101,
+            "Spring Boot",
+            "Webentwicklung mit Java",
+            instructor, CourseCategory.WEB_DEVELOPMENT,
+            DifficultyLevel.INTERMEDIATE, 99.99
+    );
 
         Lesson lesson = new Lesson(
                 1,

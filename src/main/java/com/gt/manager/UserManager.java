@@ -4,11 +4,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import com.gt.exception.LMSException;
 import com.gt.model.User;
 
 public class UserManager {
+
+    private static final Logger LOGGER =
+        Logger.getLogger(UserManager.class.getName());
 
     private static final UserManager INSTANCE = new UserManager();
 
@@ -26,12 +30,18 @@ public class UserManager {
     public void addUser(User user) throws LMSException {
 
         if (user == null) {
+            LOGGER.warning(
+                "Registrierung fehlgeschlagen: User ist null."
+        );
             throw new LMSException(
                     "Benutzer darf nicht null sein."
             );
         }
 
         if (users.containsKey(user.getId())) {
+            LOGGER.warning(
+                "Benutzer-ID existiert bereits: "
+                + user.getId() );
             throw new LMSException(
                     "Benutzer mit ID "
                     + user.getId()
@@ -40,6 +50,11 @@ public class UserManager {
         }
 
         if (findUserByEmail(user.getEmail()) != null) {
+            LOGGER.warning(
+                "E-Mail-Adresse existiert bereits: "
+                + user.getEmail()
+        );
+
             throw new LMSException(
                     "Email ist bereits vergeben: "
                     + user.getEmail()
@@ -47,6 +62,9 @@ public class UserManager {
         }
 
         users.put(user.getId(), user);
+        LOGGER.info(
+            "Benutzer registriert: ID=" + user.getId()
+    );
     }
 
     public void removeUser(int id) throws LMSException {

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import com.gt.exception.LMSException;
 import com.gt.model.Course;
@@ -13,6 +14,9 @@ import com.gt.model.Enrollment;
 import com.gt.model.Student;
 
 public class EnrollmentManager {
+
+    private static final Logger LOGGER =
+        Logger.getLogger(EnrollmentManager.class.getName());
 
     private static final EnrollmentManager INSTANCE =
             new EnrollmentManager();
@@ -36,18 +40,32 @@ public class EnrollmentManager {
             Course course) throws LMSException {
 
         if (student == null) {
+            LOGGER.warning(
+                "Einschreibung fehlgeschlagen: Student ist null."
+            );
             throw new LMSException(
                     "Student darf nicht null sein."
             );
         }
 
         if (course == null) {
+
+            LOGGER.warning(
+                "Einschreibung fehlgeschlagen: Kurs ist null."
+            );
             throw new LMSException(
                     "Kurs darf nicht null sein."
             );
         }
 
         if (isStudentEnrolled(student, course)) {
+
+        LOGGER.warning(
+                "Doppelte Einschreibung: Student-ID="
+                + student.getId()
+                + ", Kurs-ID="
+                + course.getId()
+        );
             throw new LMSException(
                     "Student ist bereits im Kurs eingeschrieben."
             );
@@ -64,6 +82,14 @@ public class EnrollmentManager {
                 enrollment
         );
 
+            LOGGER.info(
+            "Student eingeschrieben: Student-ID="
+            + student.getId()
+            + ", Kurs-ID="
+            + course.getId()
+    );
+
+
         return enrollment;
     }
 
@@ -76,12 +102,24 @@ public class EnrollmentManager {
                 findEnrollment(student, course);
 
         if (enrollment == null) {
+
+            LOGGER.warning(
+                "Ausschreibung fehlgeschlagen: "
+                + "keine Einschreibung gefunden."
+            );
             throw new LMSException(
                     "Keine Einschreibung gefunden."
             );
         }
 
         enrollments.remove(enrollment.getId());
+
+        LOGGER.info(
+            "Student ausgeschrieben: Student-ID="
+            + student.getId()
+            + ", Kurs-ID="
+            + course.getId()
+        );
     }
 
     // Bestimmte Einschreibung suchen
