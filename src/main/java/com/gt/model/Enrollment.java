@@ -1,6 +1,8 @@
 package com.gt.model;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Enrollment {
 
@@ -8,7 +10,9 @@ public class Enrollment {
     private Student student;
     private Course course;
     private LocalDate enrollmentDate;
-    private double progress;
+    private Integer rating;
+    private List<LessonProgress> lessonProgressList;
+
 
     public Enrollment() {
     }
@@ -18,7 +22,15 @@ public class Enrollment {
         this.student = student;
         this.course = course;
         this.enrollmentDate = LocalDate.now();
-        this.progress = 0.0;
+        this.lessonProgressList = new ArrayList<>();
+
+        for (Lesson lesson : course.getLessons()) {
+
+            lessonProgressList.add(
+                    new LessonProgress(lesson)
+            );
+        }
+        
     }
 
     public int getId() {
@@ -53,11 +65,20 @@ public class Enrollment {
         this.enrollmentDate = enrollmentDate;
     }
 
-    public double getProgress() {
-        return progress;
+    
+    public Integer getRating() {
+        return rating;
     }
 
-    public void setProgress(double progress) {
-        this.progress = progress;
+    public void setRating(Integer rating) {
+        this.rating = rating;
+    }
+
+    public List<LessonProgress> getLessonProgressList() {
+        return lessonProgressList;
+    }
+
+    public void setLessonProgressList(List<LessonProgress> lessonProgressList) {
+        this.lessonProgressList = lessonProgressList;
     }
 }

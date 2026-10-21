@@ -11,7 +11,12 @@ import com.gt.filter.CourseFilterStrategy;
 import com.gt.filter.DifficultyFilter;
 import com.gt.filter.PriceFilter;
 import com.gt.manager.CourseManager;
+import com.gt.manager.EnrollmentManager;
+import com.gt.manager.UserManager;
 import com.gt.model.Course;
+import com.gt.model.Lesson;
+import com.gt.model.Student;
+import com.gt.model.User;
 
 public class App {
 
@@ -52,6 +57,12 @@ public class App {
                 case "6":
                     filterCourses(scanner);
                     break;
+                case "7":
+                    rateCourse(scanner);
+
+                case "8":
+                    completeLesson(scanner);
+                    break;
 
                 case "0":
                     running = false;
@@ -82,6 +93,8 @@ public class App {
         System.out.println("4 - Kursverwaltung");
         System.out.println("5 - Kurse suchen");
         System.out.println("6 - Kurse filtern");
+        System.out.println("7 - Kurs bewerten");
+        System.out.println("8 - Lektion als abgeschlossen markieren");
         System.out.println("0 - Programm beenden");
         System.out.println("==============================");
     }
@@ -291,6 +304,193 @@ private static void printCourses(
                 + " | "
                 + course.getPrice()
                 + " €"
+        );
+    }
+}
+
+private static void rateCourse(Scanner scanner) {
+
+    UserManager userManager =
+            UserManager.getInstance();
+
+    CourseManager courseManager =
+            CourseManager.getInstance();
+
+    EnrollmentManager enrollmentManager =
+            EnrollmentManager.getInstance();
+
+    try {
+
+        System.out.print("Student-ID: ");
+        int studentId =
+                Integer.parseInt(scanner.nextLine());
+
+        User user =
+                userManager.findUserById(studentId);
+
+        if (!(user instanceof Student)) {
+            System.out.println(
+                    "Student nicht gefunden."
+            );
+            return;
+        }
+
+        Student student = (Student) user;
+
+        System.out.print("Kurs-ID: ");
+        int courseId =
+                Integer.parseInt(scanner.nextLine());
+
+        Course course =
+                courseManager.findCourseById(courseId);
+
+        if (course == null) {
+            System.out.println(
+                    "Kurs nicht gefunden."
+            );
+            return;
+        }
+
+        System.out.print("Sterne (1-5): ");
+        int stars =
+                Integer.parseInt(scanner.nextLine());
+
+        enrollmentManager.rateCourse(
+                student,
+                course,
+                stars
+        );
+
+        System.out.println(
+                "Bewertung gespeichert."
+        );
+
+    } catch (LMSException e) {
+
+        System.out.println(
+                "Fehler: " + e.getMessage()
+        );
+
+    } catch (NumberFormatException e) {
+
+        System.out.println(
+                "Bitte eine gültige Zahl eingeben."
+        );
+    }
+}
+
+private static void completeLesson(Scanner scanner) {
+
+    UserManager userManager =
+            UserManager.getInstance();
+
+    CourseManager courseManager =
+            CourseManager.getInstance();
+
+    EnrollmentManager enrollmentManager =
+            EnrollmentManager.getInstance();
+
+    try {
+
+        // Student auswählen
+        System.out.print("Student-ID: ");
+        int studentId =
+                Integer.parseInt(scanner.nextLine());
+
+        User user =
+                userManager.findUserById(studentId);
+
+        if (!(user instanceof Student)) {
+            System.out.println(
+                    "Student nicht gefunden."
+            );
+            return;
+        }
+
+        Student student = (Student) user;
+
+        // Kurs auswählen
+        System.out.print("Kurs-ID: ");
+        int courseId =
+                Integer.parseInt(scanner.nextLine());
+
+        Course course =
+                courseManager.findCourseById(courseId);
+
+        if (course == null) {
+            System.out.println(
+                    "Kurs nicht gefunden."
+            );
+            return;
+        }
+
+        // Lektionen anzeigen
+        System.out.println("\nLektionen:");
+
+        for (Lesson lesson : course.getLessons()) {
+
+            System.out.println(
+                    lesson.getId()
+                    + " - "
+                    + lesson.getTitle()
+            );
+        }
+
+        // Lektion auswählen
+        System.out.print("\nLektion-ID: ");
+        int lessonId =
+                Integer.parseInt(scanner.nextLine());
+
+        Lesson selectedLesson = null;
+
+        for (Lesson lesson : course.getLessons()) {
+
+            if (lesson.getId() == lessonId) {
+                selectedLesson = lesson;
+                break;
+            }
+        }
+
+        if (selectedLesson == null) {
+            System.out.println(
+                    "Lektion nicht gefunden."
+            );
+            return;
+        }
+
+        // Lektion abschließen
+        enrollmentManager.markLessonAsCompleted(
+                student,
+                course,
+                selectedLesson
+        );
+
+        System.out.println(
+                "Lektion wurde als abgeschlossen markiert."
+        );
+
+        // neuen Fortschritt berechnen
+        double progress =
+                enrollmentManager.calculateCourseProgress(
+                        student,
+                        course
+                );
+
+        System.out.printf(
+                "Kursfortschritt: %.1f%%%n",
+                progress
+        );
+
+    } catch (LMSException e) {
+
+        System.out.println(
+                "Fehler: " + e.getMessage()
+        );
+
+    } catch (NumberFormatException e) {
+
+        System.out.println(
+                "Bitte eine gültige Zahl eingeben."
         );
     }
 }

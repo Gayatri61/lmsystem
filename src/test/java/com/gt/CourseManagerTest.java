@@ -30,11 +30,10 @@ public void shouldFindCourseByTitleUsingRegex()
     );
 
     Course course = new Course(
-            101,
-            "Spring Boot",
-            "Webentwicklung mit Java",
-            instructor, CourseCategory.WEB_DEVELOPMENT,
-            DifficultyLevel.INTERMEDIATE, 99.99
+            100,
+            "Java Grundlagen",
+            "Einführung in Java",
+            instructor, CourseCategory.PROGRAMMING, DifficultyLevel.BEGINNER, 100.0
     );
 
     manager.addCourse(course);
