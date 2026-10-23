@@ -1,29 +1,34 @@
 package com.gt.manager;
 
 
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-
+import java.util.logging.Logger;
+import com.gt.dao.CourseDAO;
 import com.gt.exception.LMSException;
 import com.gt.filter.CourseFilterStrategy;
 import com.gt.model.Course;
 
 public class CourseManager {
 
-    private static final CourseManager INSTANCE =
-            new CourseManager();
+    private static final Logger LOGGER = Logger.getLogger(CourseManager.class.getName());
 
-    private final Map<Integer, Course> courses;
+    private static final CourseManager INSTANCE =null;
+            
+
+    private CourseDAO courseDAO;
+
 
     private CourseManager() {
-        courses = new HashMap<>();
+        courseDAO = new CourseDAO();
     }
 
     public static CourseManager getInstance() {
+        if (INSTANCE == null) {
+            return new CourseManager();
+        }
+
         return INSTANCE;
     }
 
@@ -36,36 +41,54 @@ public class CourseManager {
             );
         }
 
-        if (courses.containsKey(course.getId())) {
+        try {
+            courseDAO.create(course);
+        } catch (SQLException e) {
+
+            LOGGER.warning(
+                    "Fehler beim Erstellen des Kurses: "
+                            + e.getMessage()
+            );
             throw new LMSException(
-                    "Kurs mit ID "
-                    + course.getId()
-                    + " existiert bereits."
+                    "Fehler beim Erstellen des Kurses.",
+                    e
             );
         }
-
-        courses.put(course.getId(), course);
     }
 
     public void removeCourse(int courseId)
             throws LMSException {
-
-        if (!courses.containsKey(courseId)) {
+        try {
+            courseDAO.delete(courseId);
+        } catch (SQLException e) {
+            LOGGER.warning(
+                    "Fehler beim Löschen des Kurses: "
+                            + e.getMessage()
+            );
             throw new LMSException(
-                    "Kurs mit ID "
-                    + courseId
-                    + " wurde nicht gefunden."
+                    "Fehler beim Löschen des Kurses.",
+                    e
             );
         }
-
-        courses.remove(courseId);
     }
 
-    public Course findCourseById(int courseId) {
-        return courses.get(courseId);
+    public Course findCourseById(int courseId) throws LMSException {
+        try {
+            return courseDAO.findById(courseId);
+        } catch (SQLException e) {
+            LOGGER.warning(
+                    "Fehler beim Abrufen des Kurses: "
+                            + e.getMessage()
+            );
+            throw new LMSException(
+                    "Fehler beim Abrufen des Kurses.",
+                    e
+            );
+        }
     }
 
-    public Course findCourseByTitle(String title) {
+    // check if needed to implement this method in CourseManager
+   /* public Course findCourseByTitle(String title)  {
 
         for (Course course : courses.values()) {
 
@@ -75,65 +98,51 @@ public class CourseManager {
         }
 
         return null;
-    }
+    }*/
 
-public List<Course> getAllCourses() {
-        return new ArrayList<>(courses.values());
+public List<Course> getAllCourses() throws LMSException {
+    List<Course> courses = new ArrayList<>();
+    try {
+        courses = courseDAO.findAll();
+    } catch (SQLException e) {
+        LOGGER.warning(
+                "Fehler beim Abrufen der Kurse: "
+                        + e.getMessage()
+        );
+        throw new LMSException(
+                "Fehler beim Abrufen der Kurse.",
+                e
+        );
     }
+    return courses;
+}
 
 
 public List<Course> searchCourses(String searchPattern)
         throws LMSException {
+               try {
+        return courseDAO.searchByTitle(searchPattern);
 
-    if (searchPattern == null || searchPattern.isBlank()) {
-        throw new LMSException(
-                "Der Suchbegriff darf nicht leer sein."
-        );
-    }
+    } catch (SQLException e) {
 
-    List<Course> results = new ArrayList<>();
-
-    try {
-        Pattern pattern = Pattern.compile(
-                searchPattern,
-                Pattern.CASE_INSENSITIVE
+        LOGGER.warning(
+                "Fehler bei der Kurssuche: "
+                        + e.getMessage()
         );
 
-        for (Course course : courses.values()) {
-
-            boolean foundInTitle =
-                    pattern.matcher(
-                            course.getTitle()
-                    ).find();
-
-            boolean foundInDescription =
-                    pattern.matcher(
-                            course.getDescription()
-                    ).find();
-
-            if (foundInTitle || foundInDescription) {
-                results.add(course);
-            }
-        }
-
-    } catch (PatternSyntaxException e) {
-
         throw new LMSException(
-                "Ungültiger regulärer Ausdruck: "
-                        + searchPattern,
+                "Fehler bei der Kurssuche.",
                 e
         );
     }
-
-    return results;
-}
+        }
 
 public List<Course> filterCourses(
-        CourseFilterStrategy strategy) {
+        CourseFilterStrategy strategy) throws LMSException {
 
     List<Course> results = new ArrayList<>();
-
-    for (Course course : courses.values()) {
+    List<Course> courses =getAllCourses();
+    for (Course course : courses) {
 
         if (strategy.matches(course)) {
             results.add(course);

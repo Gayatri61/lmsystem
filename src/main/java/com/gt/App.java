@@ -1,7 +1,12 @@
 package com.gt;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
+
+import com.gt.config.DatabaseConnection;
+import com.gt.config.DatabaseInitializer;
 import com.gt.config.LoggingConfig;
 import com.gt.enums.CourseCategory;
 import com.gt.enums.DifficultyLevel;
@@ -21,6 +26,23 @@ import com.gt.model.User;
 public class App {
 
     public static void main(String[] args) {
+
+           try (Connection connection =
+                 DatabaseConnection.getConnection()) {
+
+        System.out.println(
+                "PostgreSQL-Verbindung erfolgreich!"
+        );
+
+    } catch (SQLException e) {
+
+        System.out.println(
+                "Datenbankfehler: "
+                + e.getMessage()
+        );
+    }
+
+      DatabaseInitializer.initialize();
 
         LoggingConfig.configure();
 
@@ -177,8 +199,13 @@ private static void filterCourses(Scanner scanner) {
             return;
     }
 
-    List<Course> results =
-            courseManager.filterCourses(strategy);
+    List<Course> results = null;
+    try {
+        results = courseManager.filterCourses(strategy);
+    } catch (LMSException e) {
+        System.out.println("Fehler: " + e.getMessage());
+        e.printStackTrace();
+    }
 
     printCourses(results);
 }

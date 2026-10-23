@@ -33,6 +33,13 @@ public class Enrollment {
         
     }
 
+    public Enrollment(Student student, Course course) {
+        this.student = student;
+        this.course = course;
+        this.enrollmentDate = LocalDate.now();
+        
+    }
+
     public int getId() {
         return id;
     }

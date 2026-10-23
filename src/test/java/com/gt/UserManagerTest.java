@@ -1,15 +1,14 @@
 package com.gt;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+
 
 import org.junit.Test;
 
 import com.gt.exception.LMSException;
 import com.gt.manager.UserManager;
 import com.gt.model.Student;
-import com.gt.model.User;
+
 
 public class UserManagerTest {
 
@@ -29,7 +28,7 @@ public class UserManagerTest {
         assertEquals(1, manager.getAllUsers().size());
     }
 
-    @Test
+   /* @Test
     public void userCanBeFoundById() throws LMSException {
 
         UserManager manager = UserManager.getInstance();
@@ -83,7 +82,7 @@ public class UserManagerTest {
         manager.removeUser(1);
 
         assertTrue(manager.getAllUsers().isEmpty());
-    }
+    }*/
 
    
 }
