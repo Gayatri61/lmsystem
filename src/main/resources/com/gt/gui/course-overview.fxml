@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      alignment="CENTER"
+      spacing="20">
+
+    <Label text="Kursübersicht"
+           style="-fx-font-size: 24px;"/>
+
+    <Label text="Willkommen im LMS!"/>
+
+</VBox>

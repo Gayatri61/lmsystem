@@ -123,16 +123,19 @@ public void addUser(User user) throws LMSException {
         }
     }
 
-    public User findUserByEmail(HashMap<Integer,User> users, String email) {
-
-        for (User user : users.values()) {
-
-            if (user.getEmail().equalsIgnoreCase(email)) {
-                return user;
-            }
+    public User findUserByEmail( String email) throws LMSException {
+        try {
+            return userDAO.findByEmail(email);
+        } catch (SQLException e) {
+            LOGGER.severe(
+                    "Fehler beim Abrufen des Benutzers: "
+                    + e.getMessage()
+            );
+            throw new LMSException(
+                    "Fehler beim Abrufen des Benutzers: "
+                    + e.getMessage()
+            );
         }
-
-        return null;
     }
 
 }

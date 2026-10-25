@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.gt.gui.controller.LoginController"
+      alignment="CENTER"
+      spacing="15">
+
+    <Label text="Login"
+           style="-fx-font-size: 24px;"/>
+
+    <Label text="E-Mail"/>
+
+    <TextField fx:id="emailField"
+               promptText="E-Mail eingeben"
+               maxWidth="300"/>
+
+    <Button text="Login"
+            prefWidth="200"
+            onAction="#login"/>
+
+    <Button text="Zurück"
+            prefWidth="200"
+            onAction="#back"/>
+
+</VBox>
