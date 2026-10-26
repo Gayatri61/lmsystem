@@ -6,6 +6,18 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+
+
+import com.gt.gui.controller.CourseDetailController;
+import com.gt.model.Course;
+
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
+import java.io.IOException;
+import java.net.URL;
+
 public final class SceneManager {
 
     private static Stage primaryStage;
@@ -33,16 +45,62 @@ public final class SceneManager {
         changeScene("course-overview.fxml");
     }
 
+    public static void showCourseDetail(Course course) {
+
+        try {
+
+            URL resource =
+                    SceneManager.class.getResource(
+                            "/com/gt/gui/course-detail.fxml"
+                    );
+
+            if (resource == null) {
+                throw new IllegalArgumentException(
+                        "course-detail.fxml nicht gefunden."
+                );
+            }
+
+            FXMLLoader loader =
+                    new FXMLLoader(resource);
+
+            Scene scene =
+                    new Scene(loader.load());
+
+            CourseDetailController controller =
+                    loader.getController();
+
+            controller.setCourse(course);
+
+            primaryStage.setScene(scene);
+            primaryStage.show();
+
+        } catch (IOException e) {
+
+            throw new RuntimeException(
+                    "Kursdetailansicht konnte nicht geladen werden.",
+                    e
+            );
+        }
+    }
+
     private static void changeScene(String fxmlFile) {
 
         try {
-            FXMLLoader loader =
-                    new FXMLLoader(
-                            SceneManager.class.getResource(
-                                    "/com/gt/gui/"
-                                            + fxmlFile
-                            )
+
+            URL resource =
+                    SceneManager.class.getResource(
+                            "/com/gt/gui/" + fxmlFile
                     );
+
+            if (resource == null) {
+                throw new IllegalArgumentException(
+                        "FXML-Datei nicht gefunden: "
+                                + fxmlFile
+                );
+            }
+
+            FXMLLoader loader =
+                    new FXMLLoader(resource);
 
             Scene scene =
                     new Scene(loader.load());
@@ -51,6 +109,7 @@ public final class SceneManager {
             primaryStage.show();
 
         } catch (IOException e) {
+
             throw new RuntimeException(
                     "View konnte nicht geladen werden: "
                             + fxmlFile,

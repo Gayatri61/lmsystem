@@ -11,12 +11,15 @@ import com.gt.enums.CourseCategory;
 import com.gt.enums.DifficultyLevel;
 import com.gt.model.Course;
 import com.gt.model.Instructor;
+import com.gt.model.Lesson;
 import com.gt.model.User;
 
 public class CourseDAO {
 
     private final UserDAO userDAO =
             new UserDAO();
+
+    private final LessonDAO lessonDAO = new LessonDAO();
 
     public void create(Course course)
             throws SQLException {
@@ -317,6 +320,11 @@ public class CourseDAO {
                 course.setPrice(
                         resultSet.getDouble("price")
                 );
+
+               
+            List<Lesson> lessons = lessonDAO.findByCourseId(course.getId());
+
+            course.setLessons(lessons);
 
                 courses.add(course);
             }

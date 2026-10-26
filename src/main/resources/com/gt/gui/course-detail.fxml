@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.gt.gui.controller.CourseDetailController"
+      spacing="12"
+      alignment="CENTER">
+
+    <Label fx:id="titleLabel"
+           style="-fx-font-size: 26px;"/>
+
+    <Label text="Beschreibung:"/>
+
+    <Label fx:id="descriptionLabel"
+           wrapText="true"
+           maxWidth="500"/>
+
+    <Label fx:id="categoryLabel"/>
+
+    <Label fx:id="difficultyLabel"/>
+
+    <Label fx:id="priceLabel"/>
+
+    <Label fx:id="instructorLabel"/>
+
+    <Label text="Lektionen:"
+           style="-fx-font-size: 18px;"/>
+
+    <ListView fx:id="lessonListView"
+              prefWidth="500"
+              prefHeight="200"/>
+
+    <Button text="Zurück"
+            prefWidth="200"
+            onAction="#back"/>
+
+</VBox>
