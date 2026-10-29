@@ -11,11 +11,6 @@ import java.io.IOException;
 import com.gt.gui.controller.CourseDetailController;
 import com.gt.model.Course;
 
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
-
-import java.io.IOException;
 import java.net.URL;
 
 public final class SceneManager {

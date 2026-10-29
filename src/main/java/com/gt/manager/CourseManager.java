@@ -9,19 +9,27 @@ import com.gt.dao.CourseDAO;
 import com.gt.exception.LMSException;
 import com.gt.filter.CourseFilterStrategy;
 import com.gt.model.Course;
+import com.gt.observer.CourseCache;
 
-public class CourseManager {
+public class CourseManager extends ObservableManager {
 
     private static final Logger LOGGER = Logger.getLogger(CourseManager.class.getName());
 
     private static final CourseManager INSTANCE =null;
             
 
-    private CourseDAO courseDAO;
+    private final CourseDAO courseDAO;
+
+    private final CourseCache courseCache;
 
 
     private CourseManager() {
         courseDAO = new CourseDAO();
+
+        courseCache =
+                CourseCache.getInstance();
+
+        addObserver(courseCache);
     }
 
     public static CourseManager getInstance() {
@@ -43,6 +51,8 @@ public class CourseManager {
 
         try {
             courseDAO.create(course);
+
+            notifyObservers();
         } catch (SQLException e) {
 
             LOGGER.warning(
@@ -60,6 +70,7 @@ public class CourseManager {
             throws LMSException {
         try {
             courseDAO.delete(courseId);
+            notifyObservers();
         } catch (SQLException e) {
             LOGGER.warning(
                     "Fehler beim Löschen des Kurses: "
@@ -73,8 +84,23 @@ public class CourseManager {
     }
 
     public Course findCourseById(int courseId) throws LMSException {
+        // 1. Cache prüfen
+        Course cachedCourse = courseCache.get(courseId);
+
+        if (cachedCourse != null) {
+            return cachedCourse;
+        }
+
+
+        Course course = null;
         try {
-            return courseDAO.findById(courseId);
+             course = courseDAO.findById(courseId);
+
+                // 3. Ergebnis cachen
+            if (course != null) {
+                courseCache.put(course);
+            }
+
         } catch (SQLException e) {
             LOGGER.warning(
                     "Fehler beim Abrufen des Kurses: "
@@ -85,6 +111,7 @@ public class CourseManager {
                     e
             );
         }
+        return course;
     }
 
     // check if needed to implement this method in CourseManager
@@ -101,9 +128,18 @@ public class CourseManager {
     }*/
 
 public List<Course> getAllCourses() throws LMSException {
+
+    if (!courseCache.isEmpty()) {
+        return courseCache.getAll();
+    }
     List<Course> courses = new ArrayList<>();
+
+
+
     try {
         courses = courseDAO.findAll();
+
+        courseCache.putAll(courses);
     } catch (SQLException e) {
         LOGGER.warning(
                 "Fehler beim Abrufen der Kurse: "

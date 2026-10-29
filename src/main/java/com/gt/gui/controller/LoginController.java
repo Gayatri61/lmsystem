@@ -1,9 +1,10 @@
 package com.gt.gui.controller;
 
-
 import com.gt.exception.LMSException;
 import com.gt.gui.util.SceneManager;
+import com.gt.manager.SessionManager;
 import com.gt.manager.UserManager;
+import com.gt.model.Student;
 import com.gt.model.User;
 
 import javafx.fxml.FXML;
@@ -15,35 +16,42 @@ public class LoginController {
     @FXML
     private TextField emailField;
 
-    private final UserManager userManager =
-            UserManager.getInstance();
+    private final UserManager userManager = UserManager.getInstance();
 
     @FXML
     private void login() {
 
-        String email =
-                emailField.getText().trim();
+        String email = emailField.getText().trim();
 
         if (email.isEmpty()) {
             showError(
-                    "Bitte geben Sie eine E-Mail-Adresse ein."
-            );
+                    "Bitte geben Sie eine E-Mail-Adresse ein.");
             return;
         }
 
         try {
 
-            User user =
-                    userManager.findUserByEmail(email);
+            User user = userManager.findUserByEmail(email);
 
             if (user == null) {
                 showError(
-                        "Benutzer wurde nicht gefunden."
-                );
+                        "Benutzer wurde nicht gefunden.");
                 return;
             }
 
+            if (user instanceof Student student) {
+
+                SessionManager.login(student);
+
+                SceneManager.showCourseOverview();
+
+            } else {
+                showError(
+                        "Login nur für Studenten möglich.");
+            }
+
             SceneManager.showCourseOverview();
+            
 
         } catch (LMSException e) {
             showError(e.getMessage());
@@ -57,8 +65,7 @@ public class LoginController {
 
     private void showError(String message) {
 
-        Alert alert =
-                new Alert(Alert.AlertType.ERROR);
+        Alert alert = new Alert(Alert.AlertType.ERROR);
 
         alert.setTitle("Fehler");
         alert.setHeaderText(null);

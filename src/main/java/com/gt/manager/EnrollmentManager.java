@@ -19,10 +19,10 @@ public class EnrollmentManager {
 
     private static final EnrollmentManager INSTANCE = null;
 
-    private EnrollmentDAO enrollmentDAO;
+    private final EnrollmentDAO enrollmentDAO;
 
     private EnrollmentManager() {
-        new EnrollmentDAO();
+        this.enrollmentDAO = new EnrollmentDAO();
     }
 
     public static EnrollmentManager getInstance() {
