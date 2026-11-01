@@ -1,0 +1,272 @@
+{
+  "users" : [ {
+    "id" : 1,
+    "name" : "Anna",
+    "email" : "anna@test.de",
+    "userType" : "INSTRUCTOR"
+  }, {
+    "id" : 2,
+    "name" : "Gayatri",
+    "email" : "gayatrithakur61@gmail.com",
+    "userType" : "STUDENT"
+  }, {
+    "id" : 3,
+    "name" : "aarush",
+    "email" : "a@gmail.com",
+    "userType" : "STUDENT"
+  }, {
+    "id" : 4,
+    "name" : "Anshul",
+    "email" : "ansh@gmail.com",
+    "userType" : "STUDENT"
+  }, {
+    "id" : 5,
+    "name" : "Max Mustermann",
+    "email" : "maxægmail.com",
+    "userType" : "STUDENT"
+  }, {
+    "id" : 6,
+    "name" : "sws",
+    "email" : "swsw.com",
+    "userType" : "STUDENT"
+  }, {
+    "id" : 7,
+    "name" : "swsw",
+    "email" : "emailtest.de",
+    "userType" : "STUDENT"
+  }, {
+    "id" : 8,
+    "name" : "frfr",
+    "email" : "frfr.de",
+    "userType" : "STUDENT"
+  }, {
+    "id" : 9,
+    "name" : "rfrf",
+    "email" : "fr@gmail.com",
+    "userType" : "STUDENT"
+  }, {
+    "id" : 10,
+    "name" : "frfr",
+    "email" : "frfrde@deedede.gtg",
+    "userType" : "STUDENT"
+  } ],
+  "students" : [ {
+    "userId" : 2
+  }, {
+    "userId" : 3
+  }, {
+    "userId" : 4
+  }, {
+    "userId" : 5
+  }, {
+    "userId" : 6
+  }, {
+    "userId" : 7
+  }, {
+    "userId" : 8
+  }, {
+    "userId" : 9
+  }, {
+    "userId" : 10
+  } ],
+  "instructors" : [ {
+    "userId" : 1,
+    "specialization" : "Java"
+  } ],
+  "courses" : [ {
+    "id" : 5,
+    "title" : "Java Grundlagen",
+    "description" : "Einführung in Java, Variablen, Schleifen und Methoden.",
+    "instructorId" : 1,
+    "category" : "PROGRAMMING",
+    "difficultyLevel" : "BEGINNER",
+    "price" : 29.99
+  }, {
+    "id" : 6,
+    "title" : "Java OOP",
+    "description" : "Objektorientierte Programmierung mit Klassen, Vererbung und Interfaces.",
+    "instructorId" : 1,
+    "category" : "PROGRAMMING",
+    "difficultyLevel" : "INTERMEDIATE",
+    "price" : 39.99
+  }, {
+    "id" : 7,
+    "title" : "Java Collections",
+    "description" : "Arbeiten mit List, Set, Map und weiteren Collections.",
+    "instructorId" : 1,
+    "category" : "PROGRAMMING",
+    "difficultyLevel" : "INTERMEDIATE",
+    "price" : 34.99
+  }, {
+    "id" : 8,
+    "title" : "PostgreSQL Grundlagen",
+    "description" : "Einführung in relationale Datenbanken und SQL mit PostgreSQL.",
+    "instructorId" : 1,
+    "category" : "DATABASE",
+    "difficultyLevel" : "BEGINNER",
+    "price" : 24.99
+  }, {
+    "id" : 9,
+    "title" : "Fortgeschrittenes Java",
+    "description" : "Streams, Lambdas, Generics und weitere fortgeschrittene Java-Themen.",
+    "instructorId" : 1,
+    "category" : "PROGRAMMING",
+    "difficultyLevel" : "ADVANCED",
+    "price" : 49.99
+  }, {
+    "id" : 10,
+    "title" : "Spring Boot",
+    "description" : "Webentwicklung mit Java",
+    "instructorId" : 1,
+    "category" : "WEB_DEVELOPMENT",
+    "difficultyLevel" : "INTERMEDIATE",
+    "price" : 99.99
+  }, {
+    "id" : 11,
+    "title" : "Java Grundlagen",
+    "description" : "Einführung in Java",
+    "instructorId" : 1,
+    "category" : "PROGRAMMING",
+    "difficultyLevel" : "BEGINNER",
+    "price" : 100.0
+  } ],
+  "lessons" : [ {
+    "id" : 2,
+    "title" : "Einführung in Java",
+    "content" : "Grundlagen der Programmiersprache Java und Aufbau eines Java-Programms.",
+    "courseId" : 5
+  }, {
+    "id" : 3,
+    "title" : "Variablen und Datentypen",
+    "content" : "Primitive Datentypen, Variablen und Konstanten in Java.",
+    "courseId" : 5
+  }, {
+    "id" : 4,
+    "title" : "Bedingungen und Schleifen",
+    "content" : "Arbeiten mit if, else, switch, for und while.",
+    "courseId" : 5
+  }, {
+    "id" : 5,
+    "title" : "Methoden",
+    "content" : "Methoden definieren, Parameter verwenden und Rückgabewerte verstehen.",
+    "courseId" : 5
+  }, {
+    "id" : 6,
+    "title" : "Klassen und Objekte",
+    "content" : "Einführung in Klassen, Objekte, Attribute und Methoden.",
+    "courseId" : 6
+  }, {
+    "id" : 7,
+    "title" : "Konstruktoren",
+    "content" : "Objekte mit Konstruktoren erstellen und initialisieren.",
+    "courseId" : 6
+  }, {
+    "id" : 8,
+    "title" : "Vererbung",
+    "content" : "Vererbung mit extends und Wiederverwendung von Code.",
+    "courseId" : 6
+  }, {
+    "id" : 9,
+    "title" : "Interfaces und Abstraktion",
+    "content" : "Interfaces und abstrakte Klassen in Java verwenden.",
+    "courseId" : 6
+  }, {
+    "id" : 10,
+    "title" : "Einführung in Collections",
+    "content" : "Überblick über das Java Collections Framework.",
+    "courseId" : 7
+  }, {
+    "id" : 11,
+    "title" : "List und ArrayList",
+    "content" : "Elemente mit List und ArrayList speichern und verwalten.",
+    "courseId" : 7
+  }, {
+    "id" : 12,
+    "title" : "Set und HashSet",
+    "content" : "Eindeutige Elemente mit Set und HashSet verwalten.",
+    "courseId" : 7
+  }, {
+    "id" : 13,
+    "title" : "Map und HashMap",
+    "content" : "Schlüssel-Wert-Paare mit Map und HashMap speichern.",
+    "courseId" : 7
+  }, {
+    "id" : 14,
+    "title" : "Einführung in Datenbanken",
+    "content" : "Grundlagen relationaler Datenbanken und Datenbankmanagementsysteme.",
+    "courseId" : 8
+  }, {
+    "id" : 15,
+    "title" : "SELECT Abfragen",
+    "content" : "Daten mit SELECT, WHERE und ORDER BY aus Tabellen lesen.",
+    "courseId" : 8
+  }, {
+    "id" : 16,
+    "title" : "INSERT, UPDATE und DELETE",
+    "content" : "Datensätze erstellen, ändern und löschen.",
+    "courseId" : 8
+  }, {
+    "id" : 17,
+    "title" : "JOIN Abfragen",
+    "content" : "Daten aus mehreren Tabellen mit JOIN verbinden.",
+    "courseId" : 8
+  }, {
+    "id" : 18,
+    "title" : "Generics",
+    "content" : "Typsichere Klassen und Methoden mit Generics erstellen.",
+    "courseId" : 9
+  }, {
+    "id" : 19,
+    "title" : "Lambda Expressions",
+    "content" : "Funktionale Programmierung mit Lambda Expressions.",
+    "courseId" : 9
+  }, {
+    "id" : 20,
+    "title" : "Stream API",
+    "content" : "Collections mit der Java Stream API verarbeiten.",
+    "courseId" : 9
+  }, {
+    "id" : 21,
+    "title" : "Exception Handling",
+    "content" : "Fehlerbehandlung mit try, catch, finally und eigenen Exceptions.",
+    "courseId" : 9
+  } ],
+  "enrollments" : [ {
+    "id" : 8,
+    "studentId" : 3,
+    "courseId" : 6,
+    "enrollmentDate" : "2026-10-27",
+    "rating" : null
+  }, {
+    "id" : 10,
+    "studentId" : 2,
+    "courseId" : 7,
+    "enrollmentDate" : "2026-10-29",
+    "rating" : null
+  }, {
+    "id" : 11,
+    "studentId" : 3,
+    "courseId" : 5,
+    "enrollmentDate" : "2026-10-29",
+    "rating" : null
+  }, {
+    "id" : 12,
+    "studentId" : 3,
+    "courseId" : 7,
+    "enrollmentDate" : "2026-10-29",
+    "rating" : null
+  } ],
+  "lessonProgress" : [ {
+    "enrollmentId" : 8,
+    "lessonId" : 2,
+    "completed" : true
+  }, {
+    "enrollmentId" : 8,
+    "lessonId" : 3,
+    "completed" : true
+  }, {
+    "enrollmentId" : 8,
+    "lessonId" : 4,
+    "completed" : false
+  } ]
+}
