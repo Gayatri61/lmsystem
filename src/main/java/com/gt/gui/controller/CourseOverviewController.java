@@ -7,6 +7,7 @@ import com.gt.filter.CategoryFilter;
 import com.gt.filter.DifficultyFilter;
 import com.gt.gui.util.SceneManager;
 import com.gt.manager.CourseManager;
+import com.gt.manager.SessionManager;
 import com.gt.model.Course;
 
 import javafx.fxml.FXML;
@@ -98,6 +99,11 @@ public class CourseOverviewController {
         SceneManager.showCourseDetail(selectedCourse);
     }
 
+    @FXML
+    private void showBackup() {
+        SceneManager.showBackup();
+    }
+
     private void showError(String message) {
 
         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -110,59 +116,58 @@ public class CourseOverviewController {
     }
 
     @FXML
-private void filterCourses() {
+    private void filterCourses() {
 
-    CourseCategory category =
-            categoryComboBox.getValue();
+        CourseCategory category = categoryComboBox.getValue();
 
-    DifficultyLevel difficulty =
-            difficultyComboBox.getValue();
+        DifficultyLevel difficulty = difficultyComboBox.getValue();
 
-    try {
+        try {
 
-        List<Course> courses;
+            List<Course> courses;
 
-        if (category != null) {
+            if (category != null) {
 
-            courses =
-                    courseManager.filterCourses(
-                            new CategoryFilter(category)
-                    );
+                courses = courseManager.filterCourses(
+                        new CategoryFilter(category));
 
-        } else if (difficulty != null) {
+            } else if (difficulty != null) {
 
-            courses =
-                    courseManager.filterCourses(
-                            new DifficultyFilter(difficulty)
-                    );
+                courses = courseManager.filterCourses(
+                        new DifficultyFilter(difficulty));
 
-        } else {
+            } else {
 
-            courses =
-                    courseManager.getAllCourses();
+                courses = courseManager.getAllCourses();
+            }
+
+            courseListView.getItems()
+                    .setAll(courses);
+
+        } catch (LMSException e) {
+            showError(e.getMessage());
         }
-
-        courseListView.getItems()
-                .setAll(courses);
-
-    } catch (LMSException e) {
-        showError(e.getMessage());
     }
-}
 
-@FXML
-private void resetCourses() {
+    @FXML
+    private void logout() {
+        SessionManager.logout();
+        SceneManager.showLoginView();
+    }
 
-    searchField.clear();
+    @FXML
+    private void resetCourses() {
 
-    categoryComboBox
-            .getSelectionModel()
-            .clearSelection();
+        searchField.clear();
 
-    difficultyComboBox
-            .getSelectionModel()
-            .clearSelection();
+        categoryComboBox
+                .getSelectionModel()
+                .clearSelection();
 
-    loadCourses();
-}
+        difficultyComboBox
+                .getSelectionModel()
+                .clearSelection();
+
+        loadCourses();
+    }
 }

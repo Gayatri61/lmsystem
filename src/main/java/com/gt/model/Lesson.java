@@ -5,14 +5,16 @@ public class Lesson {
     private int id;
     private String title;
     private String content;
+    private int courseId;
 
     public Lesson() {
     }
 
-    public Lesson(int id, String title, String content) {
+    public Lesson(int id, String title, String content, int courseId) {
         this.id = id;
         this.title = title;
         this.content = content;
+        this.courseId = courseId;
     }
 
     public int getId() {
@@ -37,5 +39,13 @@ public class Lesson {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public int getCourseId() {
+        return courseId;
+    }
+
+    public void setCourseId(int courseId) {
+        this.courseId = courseId;
     }
 }

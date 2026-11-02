@@ -244,7 +244,7 @@ public class EnrollmentDAO {
         }
     }
 
-   public Enrollment findByStudentAndCourse(Student student, Course course)   throws SQLException{
+   public Enrollment findByStudentAndCourse(int studentId, int courseId)   throws SQLException{
 
         String sql = """
                 SELECT *
@@ -256,14 +256,16 @@ public class EnrollmentDAO {
                      DatabaseConnection.getConnection();
                    PreparedStatement statement =
                          connection.prepareStatement(sql)) {
-                statement.setInt(1, student.getId());
-                statement.setInt(2, course.getId());
+                statement.setInt(1, studentId);
+                statement.setInt(2, courseId);
                 ResultSet resultSet = statement.executeQuery();
                 if (resultSet.next()) {
                         Enrollment enrollment = new Enrollment();
                         enrollment.setId(resultSet.getInt("id"));
+
+                        Student student=userDAO.findStudentById(studentId);
                         enrollment.setStudent(student);
-                        enrollment.setCourse(course);
+                        enrollment.setCourse( courseDAO.findById(courseId));
                         enrollment.setEnrollmentDate(resultSet.getObject("enrollment_date", java.time.LocalDate.class));
                         enrollment.setRating((Integer) resultSet.getObject("rating"));
                         return enrollment;
@@ -321,7 +323,7 @@ public class EnrollmentDAO {
     
    }
 
-   public List<Enrollment> findByCourse(Course course) throws SQLException {
+   public List<Enrollment> findByCourse(int courseId) throws SQLException {
        String sql = """
                SELECT *
                FROM enrollments
@@ -333,7 +335,7 @@ public class EnrollmentDAO {
              PreparedStatement statement =
                      connection.prepareStatement(sql)) {
 
-           statement.setInt(1, course.getId());
+           statement.setInt(1, courseId);
 
            ResultSet resultSet = statement.executeQuery();
 
@@ -342,7 +344,7 @@ public class EnrollmentDAO {
            while (resultSet.next()) {
                Enrollment enrollment = new Enrollment();
                enrollment.setId(resultSet.getInt("id"));
-               enrollment.setCourse(course);
+               enrollment.setCourse(courseDAO.findById(courseId));
 
                int studentId = resultSet.getInt("student_id");
               Student student = userDAO.findStudentById(studentId);
@@ -366,4 +368,53 @@ public class EnrollmentDAO {
        } 
    
   }
+
+   public List<Enrollment> findAll() throws SQLException {
+        
+        String sql = """
+                SELECT *
+                FROM enrollments
+                """;
+
+        try (Connection connection =
+                     DatabaseConnection.getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement(sql)) {
+
+            ResultSet resultSet = statement.executeQuery();
+
+            List<Enrollment> enrollments = new java.util.ArrayList<>();
+
+            while (resultSet.next()) {
+                Enrollment enrollment = new Enrollment();
+                enrollment.setId(resultSet.getInt("id"));
+
+                int studentId = resultSet.getInt("student_id");
+                Student student = userDAO.findStudentById(studentId);
+                enrollment.setStudent(student);
+
+                int courseId = resultSet.getInt("course_id");
+                Course course = courseDAO.findById(courseId);
+                enrollment.setCourse(course);
+
+                enrollment.setEnrollmentDate(
+                        resultSet.getObject(
+                                "enrollment_date",
+                                java.time.LocalDate.class
+                        )
+                );
+
+                enrollment.setRating(
+                        (Integer) resultSet.getObject("rating")
+                );
+
+                enrollments.add(enrollment);
+            }
+
+            return enrollments;
+        } 
+       
+   }
+
+
 }

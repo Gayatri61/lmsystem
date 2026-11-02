@@ -11,82 +11,78 @@ import javafx.scene.control.TextField;
 
 public class RegisterController {
 
-    @FXML
-    private TextField nameField;
+        @FXML
+        private TextField nameField;
 
-    @FXML
-    private TextField emailField;
+        @FXML
+        private TextField emailField;
 
-    private final UserManager userManager =
-            UserManager.getInstance();
+        private final UserManager userManager = UserManager.getInstance();
 
-    @FXML
-    private void register() {
+        @FXML
+        private void register() {
 
-        String name =
-                nameField.getText().trim();
+                String name = nameField.getText().trim();
 
-        String email =
-                emailField.getText().trim();
+                String email = emailField.getText().trim();
 
-        if (name.isEmpty() || email.isEmpty()) {
+                if (name.isEmpty() || email.isEmpty()) {
 
-            showError(
-                    "Name und E-Mail dürfen nicht leer sein."
-            );
+                        showError(
+                                        "Name und E-Mail dürfen nicht leer sein.");
 
-            return;
+                        return;
+                }
+
+                if (!email.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
+                        showError("Bitte eine gültige E-Mail-Adresse eingeben.");
+                        return;
+                }
+
+                try {
+
+                        Student student = new Student(
+                                        0,
+                                        name,
+                                        email);
+
+                        userManager.addUser(student);
+
+                        showSuccess(
+                                        "Registrierung erfolgreich.");
+
+                        SceneManager.showLoginView();
+
+                } catch (LMSException e) {
+
+                        showError(e.getMessage());
+                }
         }
 
-        try {
-
-            Student student =
-                    new Student(
-                            0,
-                            name,
-                            email
-                    );
-
-            userManager.addUser(student);
-
-            showSuccess(
-                    "Registrierung erfolgreich."
-            );
-
-            SceneManager.showLoginView();
-
-        } catch (LMSException e) {
-
-            showError(e.getMessage());
+        @FXML
+        private void back() {
+                SceneManager.showStartView();
         }
-    }
 
-    @FXML
-    private void back() {
-        SceneManager.showStartView();
-    }
+        private void showError(String message) {
 
-    private void showError(String message) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
 
-        Alert alert =
-                new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Fehler");
+                alert.setHeaderText(null);
+                alert.setContentText(message);
 
-        alert.setTitle("Fehler");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
+                alert.showAndWait();
+        }
 
-        alert.showAndWait();
-    }
+        private void showSuccess(String message) {
 
-    private void showSuccess(String message) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
 
-        Alert alert =
-                new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Erfolg");
+                alert.setHeaderText(null);
+                alert.setContentText(message);
 
-        alert.setTitle("Erfolg");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-
-        alert.showAndWait();
-    }
+                alert.showAndWait();
+        }
 }

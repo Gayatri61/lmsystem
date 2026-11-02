@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import com.gt.dao.EnrollmentDAO;
+import com.gt.dao.LessonDAO;
+import com.gt.dao.LessonProgressDAO;
 import com.gt.exception.LMSException;
 import com.gt.model.Course;
 import com.gt.model.Enrollment;
@@ -21,8 +23,13 @@ public class EnrollmentManager {
 
     private final EnrollmentDAO enrollmentDAO;
 
+    private final LessonProgressDAO lessonprogressDAO;
+
+    private final LessonDAO lessonDAO = new LessonDAO();
+
     private EnrollmentManager() {
         this.enrollmentDAO = new EnrollmentDAO();
+        this.lessonprogressDAO = new LessonProgressDAO();
     }
 
     public static EnrollmentManager getInstance() {
@@ -50,6 +57,8 @@ public class EnrollmentManager {
                             + ", Kurs-ID="
                             + course.getId());
 
+            createLessonProgressForEnrollment(enrollment);
+
             return enrollment;
 
         } catch (SQLException e) {
@@ -66,12 +75,25 @@ public class EnrollmentManager {
         }
     }
 
+    private void createLessonProgressForEnrollment(Enrollment enrollment) throws SQLException {
+        List<Lesson> lessons = lessonDAO.findByCourseId(enrollment.getCourse().getId());
+
+        for (Lesson lesson : lessons) {
+            LessonProgress lessonProgress = new LessonProgress(
+                    enrollment,
+                    lesson,
+                    false);
+
+            lessonprogressDAO.create(lessonProgress);
+        }
+    }
+
     // Student ausschreiben
     public void unenrollStudent(
             Student student,
             Course course) throws LMSException {
 
-        Enrollment enrollment = findEnrollment(student, course);
+        Enrollment enrollment = findEnrollment(student.getId(), course.getId());
 
         if (enrollment == null) {
 
@@ -99,35 +121,33 @@ public class EnrollmentManager {
 
     // Bestimmte Einschreibung suchen
     public Enrollment findEnrollment(
-            Student student,
-            Course course) throws LMSException {
+            int studentId,
+            int courseId) throws LMSException {
 
         try {
-            return enrollmentDAO.findByStudentAndCourse(student, course);
+            return enrollmentDAO.findByStudentAndCourse(studentId, courseId);
         } catch (SQLException e) {
             LOGGER.warning(
                     "Fehler beim Suchen der Einschreibung: "
-                            + e.getMessage()
-            );
+                            + e.getMessage());
 
             throw new LMSException(
                     "Fehler beim Suchen der Einschreibung.",
-                    e
-            );
+                    e);
 
         }
-       
+
     }
 
     public boolean isStudentEnrolled(
-            Student student,
-            Course course) throws LMSException {
+            int studentId,
+            int courseId) throws LMSException {
 
-        return findEnrollment(student, course) != null;
+        return findEnrollment(studentId, courseId) != null;
     }
 
     // Einschreibungen eines Studenten
-    public List<Enrollment> getEnrollmentsByStudent (
+    public List<Enrollment> getEnrollmentsByStudent(
             Student student) throws LMSException {
 
         List<Enrollment> result = new ArrayList<>();
@@ -136,44 +156,39 @@ public class EnrollmentManager {
         } catch (SQLException e) {
             LOGGER.warning(
                     "Fehler beim Abrufen der Einschreibungen: "
-                            + e.getMessage()
-            );
+                            + e.getMessage());
 
             throw new LMSException(
                     "Fehler beim Abrufen der Einschreibungen.",
-                    e
-            );
+                    e);
         }
         return result;
     }
 
     // Einschreibungen eines Kurses
     public List<Enrollment> getEnrollmentsByCourse(
-            Course course) throws LMSException {
+            int courseId) throws LMSException {
 
         List<Enrollment> result = new ArrayList<>();
 
         try {
-            result = enrollmentDAO.findByCourse(course);
+            result = enrollmentDAO.findByCourse(courseId);
         } catch (SQLException e) {
             LOGGER.warning(
                     "Fehler beim Abrufen der Einschreibungen: "
-                            + e.getMessage()
-            );
+                            + e.getMessage());
 
             throw new LMSException(
                     "Fehler beim Abrufen der Einschreibungen.",
-                    e
-            );
+                    e);
         }
 
         return result;
     }
 
-
     public void rateCourse(
-            Student student,
-            Course course,
+            int studentId,
+            int courseId,
             int stars) throws LMSException {
 
         if (stars < 1 || stars > 5) {
@@ -181,7 +196,7 @@ public class EnrollmentManager {
                     "Bewertung muss zwischen 1 und 5 Sternen liegen.");
         }
 
-        Enrollment enrollment = findEnrollment(student, course);
+        Enrollment enrollment = findEnrollment(studentId, courseId);
 
         if (enrollment == null) {
             throw new LMSException(
@@ -189,11 +204,23 @@ public class EnrollmentManager {
         }
 
         enrollment.setRating(stars);
+
+        try {
+            enrollmentDAO.update(enrollment);
+        } catch (SQLException e) {
+            LOGGER.warning(
+                    "Fehler beim Aktualisieren der Bewertung: "
+                            + e.getMessage());
+
+            throw new LMSException(
+                    "Fehler beim Aktualisieren der Bewertung.",
+                    e);
+        }
     }
 
-    public double getAverageRating(Course course) throws LMSException {
+    public Double getAverageRating(int courseId) throws LMSException {
 
-        List<Enrollment> courseEnrollments = getEnrollmentsByCourse(course);
+        List<Enrollment> courseEnrollments = getEnrollmentsByCourse(courseId);
 
         int totalStars = 0;
         int ratingCount = 0;
@@ -208,10 +235,32 @@ public class EnrollmentManager {
         }
 
         if (ratingCount == 0) {
-            return 0.0;
+            return null;
         }
 
-        return (double) totalStars / ratingCount;
+        return (double) (totalStars / ratingCount);
+    }
+
+    public Integer getRating(int studentId, int courseId) throws LMSException {
+        Enrollment enrollment = null;
+        try {
+            enrollment = enrollmentDAO.findByStudentAndCourse(studentId, courseId);
+        } catch (SQLException e) {
+            LOGGER.warning(
+                    "Fehler beim Abrufen der Bewertung: "
+                            + e.getMessage());
+
+            throw new LMSException(
+                    "Fehler beim Abrufen der Bewertung.",
+                    e);
+
+        }
+
+        if (enrollment != null) {
+            return enrollment.getRating();
+        } else {
+            return null;
+        }
     }
 
     public void markLessonAsCompleted(
@@ -219,31 +268,35 @@ public class EnrollmentManager {
             Course course,
             Lesson lesson) throws LMSException {
 
-        Enrollment enrollment = findEnrollment(student, course);
+        Enrollment enrollment = findEnrollment(student.getId(), course.getId());
 
         if (enrollment == null) {
             throw new LMSException(
                     "Student ist nicht in diesem Kurs eingeschrieben.");
         }
 
-        for (LessonProgress progress : enrollment.getLessonProgressList()) {
+        LessonProgress lessonprogress = new LessonProgress(enrollment, lesson, true);
+        try {
+            lessonprogressDAO.updateLessonProgress(lessonprogress);
+        } catch (SQLException e) {
 
-            if (progress.getLesson().getId() == lesson.getId()) {
+            LOGGER.warning(
+                    "Fehler beim markLessonAsCompleted "
+                            + e.getMessage());
 
-                progress.setCompleted(true);
-                return;
-            }
+            throw new LMSException(
+                    "Fehler beim markLessonAsCompleted",
+                    e);
+
         }
 
-        throw new LMSException(
-                "Lektion wurde nicht gefunden.");
     }
 
     public double calculateCourseProgress(
             Student student,
             Course course) throws LMSException {
 
-        Enrollment enrollment = findEnrollment(student, course);
+        Enrollment enrollment = findEnrollment(student.getId(), course.getId());
 
         if (enrollment == null) {
             throw new LMSException(
@@ -268,6 +321,63 @@ public class EnrollmentManager {
         return (double) completedLessons
                 / progressList.size()
                 * 100;
+    }
+
+    public List<LessonProgress> getLessonProgress(int studentId, int courseId) throws LMSException {
+        try {
+
+            Enrollment enrollment = findEnrollment(studentId, courseId);
+            return lessonprogressDAO.findByEnrollmentId(enrollment.getId());
+        } catch (SQLException e) {
+            LOGGER.warning(
+                    "Fehler beim Abrufen der lessonprogress: "
+                            + e.getMessage());
+
+            throw new LMSException(
+                    "Fehler beim Abrufen der lessonprogress.",
+                    e);
+        }
+    }
+
+    public void updateLessonProgress(int studentId, int lessonId, int courseId, boolean completed) throws LMSException {
+        Enrollment enrollment = findEnrollment(studentId, courseId);
+
+        if (enrollment == null) {
+            throw new LMSException(
+                    "Student ist nicht in diesem Kurs eingeschrieben.");
+        }
+
+        Lesson lesson = null;
+        try {
+            lesson = lessonDAO.findById(lessonId);
+        } catch (SQLException e) {
+            LOGGER.warning(
+                    "Fehler beim Abrufen der lesson: "
+                            + e.getMessage());
+
+            throw new LMSException(
+                    "Fehler beim Abrufen der lesson.",
+                    e);
+        }
+
+        if (lesson == null) {
+            throw new LMSException(
+                    "Lesson nicht gefunden.");
+        }
+
+        LessonProgress lessonprogress = new LessonProgress(enrollment, lesson, completed);
+
+        try {
+            lessonprogressDAO.updateLessonProgress(lessonprogress);
+        } catch (SQLException e) {
+            LOGGER.warning(
+                    "Fehler beim Aktualisieren des lessonprogress: "
+                            + e.getMessage());
+
+            throw new LMSException(
+                    "Fehler beim Aktualisieren des lessonprogress.",
+                    e);
+        }
     }
 
 }

@@ -383,8 +383,8 @@ private static void rateCourse(Scanner scanner) {
                 Integer.parseInt(scanner.nextLine());
 
         enrollmentManager.rateCourse(
-                student,
-                course,
+                student.getId(),
+                course.getId(),
                 stars
         );
 

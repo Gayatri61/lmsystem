@@ -1,7 +1,6 @@
 package com.gt.model;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Enrollment {
@@ -17,21 +16,6 @@ public class Enrollment {
     public Enrollment() {
     }
 
-    public Enrollment(int id, Student student, Course course) {
-        this.id = id;
-        this.student = student;
-        this.course = course;
-        this.enrollmentDate = LocalDate.now();
-        this.lessonProgressList = new ArrayList<>();
-
-        for (Lesson lesson : course.getLessons()) {
-
-            lessonProgressList.add(
-                    new LessonProgress(lesson)
-            );
-        }
-        
-    }
 
     public Enrollment(Student student, Course course) {
         this.student = student;

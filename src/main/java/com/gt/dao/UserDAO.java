@@ -395,4 +395,69 @@ public class UserDAO {
 
         return null;
     }
+
+    public List<Student> findAllStudents() throws SQLException {
+        String sql = """
+                SELECT *
+                FROM users u
+                JOIN students s ON u.id = s.user_id
+                WHERE u.user_type = 'STUDENT'
+                """;
+
+        List<Student> students = new ArrayList<>();
+
+        try (Connection connection =
+                     DatabaseConnection.getConnection();
+
+             PreparedStatement statement =
+                     connection.prepareStatement(sql);
+
+             ResultSet resultSet =
+                     statement.executeQuery()) {
+
+            while (resultSet.next()) {
+                Student student = new Student(
+                        resultSet.getInt("id"),
+                        resultSet.getString("name"),
+                        resultSet.getString("email")
+                );
+                students.add(student);
+            }
+        }
+
+        return students;
+    }
+
+    public List<Instructor> findAllInstructors() throws SQLException {
+        String sql = """
+                SELECT *
+                FROM users u
+                JOIN instructors i ON u.id = i.user_id
+                WHERE u.user_type = 'INSTRUCTOR'
+                """;
+
+        List<Instructor> instructors = new ArrayList<>();
+
+        try (Connection connection =
+                     DatabaseConnection.getConnection();
+
+             PreparedStatement statement =
+                     connection.prepareStatement(sql);
+
+             ResultSet resultSet =
+                     statement.executeQuery()) {
+
+            while (resultSet.next()) {
+                Instructor instructor = new Instructor(
+                        resultSet.getInt("id"),
+                        resultSet.getString("name"),
+                        resultSet.getString("email"),
+                        resultSet.getString("specialization")
+                );
+                instructors.add(instructor);
+            }
+        }
+
+        return instructors;
+    }
 }

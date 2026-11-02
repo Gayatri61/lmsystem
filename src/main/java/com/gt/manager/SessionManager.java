@@ -20,4 +20,8 @@ public final class SessionManager {
     public static void logout() {
         currentStudent = null;
     }
+
+        public static boolean isLoggedIn() {
+        return currentStudent != null;
+    }
 }

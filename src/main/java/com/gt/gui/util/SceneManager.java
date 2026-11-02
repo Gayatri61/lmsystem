@@ -40,6 +40,12 @@ public final class SceneManager {
         changeScene("course-overview.fxml");
     }
 
+    public static void showBackup(){
+         changeScene("backup.fxml");
+    }
+
+
+
     public static void showCourseDetail(Course course) {
 
         try {

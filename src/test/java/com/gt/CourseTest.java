@@ -33,7 +33,8 @@ public class CourseTest {
         Lesson lesson = new Lesson(
                 1,
                 "Variablen",
-                "Grundlagen der Java-Variablen"
+                "Grundlagen der Java-Variablen",
+                1
         );
 
         course.addLesson(lesson);

@@ -46,4 +46,11 @@
             prefWidth="200"
             onAction="#showCourseDetails"/>
 
+   <Button text="Backup"
+            prefWidth="200"
+            onAction="#showBackup"/>
+
+<Button text="Logout" onAction="#logout"/>
+
+
 </VBox>
