@@ -1,70 +1,44 @@
 package com.gt;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertEquals;
-
+import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 
 import com.gt.exception.LMSException;
 import com.gt.manager.UserManager;
 import com.gt.model.Student;
-
+import com.gt.model.User;
 
 public class UserManagerTest {
 
-    @Test 
+    @Test
     public void userCanBeAdded() throws LMSException {
 
         UserManager manager = UserManager.getInstance();
 
         Student student = new Student(
-                1,
+                0,
                 "Anna",
-                "anna@test.de"
+                "anna_add_test@test.de"
         );
 
+        // Add user
         manager.addUser(student);
 
-        assertEquals(1, manager.getAllUsers().size());
-    }
+        // Retrieve generated ID
+        int generatedId = student.getId();
 
-   /* @Test
-    public void userCanBeFoundById() throws LMSException {
-
-        UserManager manager = UserManager.getInstance();
-
-        Student student = new Student(
-                1,
-                "Anna",
-                "anna@test.de"
-        );
-
-        manager.addUser(student);
-
-        User result = manager.findUserById(1);
+        // Find user in database
+        User result = manager.findUserById(generatedId);
 
         assertNotNull(result);
         assertEquals("Anna", result.getName());
-    }
+        assertEquals("anna_add_test@test.de", result.getEmail());
 
-    @Test
-    public void userCanBeFoundByEmail() throws LMSException {
-
-        UserManager manager = UserManager.getInstance();
-
-        Student student = new Student(
-                1,
-                "Anna",
-                "anna@test.de"
-        );
-
-        manager.addUser(student);
-
-        User result =
-                manager.findUserByEmail("anna@test.de");
-
-        assertNotNull(result);
-        assertEquals(1, result.getId());
+        // Cleanup
+        manager.removeUser(generatedId);
     }
 
     @Test
@@ -73,16 +47,25 @@ public class UserManagerTest {
         UserManager manager = UserManager.getInstance();
 
         Student student = new Student(
-                1,
-                "Anna",
-                "anna@test.de"
+                0,
+                "Max",
+                "max_remove_test@test.de"
         );
 
+        // Add user
         manager.addUser(student);
-        manager.removeUser(1);
 
-        assertTrue(manager.getAllUsers().isEmpty());
-    }*/
+        int generatedId = student.getId();
 
-   
+        // Verify user exists
+        assertNotNull(manager.findUserById(generatedId));
+
+        // Remove user
+        manager.removeUser(generatedId);
+
+        // Verify user no longer exists
+        User result = manager.findUserById(generatedId);
+
+        assertNull(result);
+    }
 }

@@ -151,10 +151,5 @@ public class LessonDAO {
         return null;
     }
 
-    public int findCourseIdByLessonId(int lessonId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'findCourseIdByLessonId'");
-    }
-
 
 }

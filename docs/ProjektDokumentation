@@ -1,0 +1,204 @@
+# Projektdokumentation – Learning Management System (LMS)
+
+
+**Projekt:** Learning Management System (LMS)  
+**Technologien:** Java 17, JavaFX, Maven, PostgreSQL und JDBC
+
+## 1. Übersicht über die Hauptfunktionen
+
+Das Learning Management System (LMS) ist eine Desktop-Anwendung, die Studenten und Dozenten eine einfache Verwaltung und Nutzung von Online-Kursen ermöglicht.
+
+Die wichtigsten Funktionen der Anwendung sind:
+
+- **Benutzerverwaltung:** Studenten und Dozenten können sich registrieren und anmelden.
+- **Kursverwaltung:** Kurse können erstellt, angezeigt und nach verschiedenen Kriterien gefiltert werden.
+- **Kurssuche:** Benutzer können nach Kursen suchen.
+- **Kursdetails:** Studenten können Informationen zu Kursen und deren Lektionen ansehen.
+- **Kursanmeldung:** Studenten können sich für Kurse anmelden und ihre Anmeldung wieder aufheben.
+- **Fortschrittsverfolgung:** Studenten können Lektionen als abgeschlossen markieren und ihren gesamten Kursfortschritt verfolgen.
+- **Bewertungssystem:** Studenten können Kurse mit 1 bis 5 Sternen bewerten. Zusätzlich wird die durchschnittliche Bewertung eines Kurses berechnet.
+- **Datenbankverwaltung:** Alle wichtigen Daten werden in einer PostgreSQL-Datenbank gespeichert.
+- **Backup und Restore:** Die Daten können im JSON-Format exportiert und später wieder importiert werden.
+- **Benutzersession:** Die Anwendung unterstützt eine einfache Verwaltung des angemeldeten Benutzers sowie eine Logout-Funktion.
+
+## 2. Struktur des Codes und wichtigste Klassen
+
+Die Anwendung wurde objektorientiert entwickelt. Der Code ist in verschiedene Pakete aufgeteilt, damit die einzelnen Aufgabenbereiche voneinander getrennt sind.
+
+### 2.1 Model
+
+Das Model-Paket enthält die wichtigsten Datenklassen der Anwendung.
+
+- **User:** Abstrakte Basisklasse für alle Benutzer. Enthält gemeinsame Eigenschaften wie ID, Name und E-Mail-Adresse.
+- **Student:** Repräsentiert einen Studenten.
+- **Instructor:** Repräsentiert einen Dozenten und enthält zusätzlich eine Spezialisierung.
+- **Course:** Enthält Kursinformationen wie Titel, Beschreibung, Dozent, Kategorie, Schwierigkeitsgrad, Preis und Lektionen.
+- **Lesson:** Repräsentiert eine einzelne Lektion eines Kurses.
+- **Enrollment:** Verbindet einen Studenten mit einem Kurs und speichert beispielsweise das Anmeldedatum und die Bewertung.
+- **LessonProgress:** Speichert, ob eine Lektion abgeschlossen wurde.
+
+### 2.2 DAO (Data Access Object)
+
+Das DAO-Paket ist für den Datenbankzugriff zuständig. Die Datenbankkommunikation erfolgt über JDBC.
+
+Beispiele:
+
+- **UserDAO:** Erstellt und lädt Benutzer aus der Datenbank.
+- **CourseDAO:** Verwaltet Kurse und lädt zugehörige Lektionen.
+- **EnrollmentDAO:** Verwaltet Kursanmeldungen und Bewertungen.
+
+Die DAO-Klassen führen SQL-Abfragen aus und verwenden PreparedStatements, um Daten sicher an die Datenbank zu übergeben.
+
+### 2.3 Manager
+
+Die Manager-Klassen enthalten die Geschäftslogik der Anwendung und verbinden die Controller mit den DAO-Klassen.
+
+Beispiele:
+
+- **UserManager:** Verwaltet Benutzer und überprüft beispielsweise, ob eine E-Mail-Adresse bereits verwendet wird.
+- **CourseManager:** Verwaltet Kurse und implementiert die Kurssuche und Filterung.
+- **EnrollmentManager:** Verwaltet Kursanmeldungen, Bewertungen und den Lernfortschritt.
+- **SessionManager:** Speichert Informationen über den aktuell angemeldeten Benutzer und ermöglicht das Abmelden.
+
+### 2.4 GUI (Graphical User Interface)
+
+Die grafische Oberfläche wurde mit JavaFX und FXML entwickelt.
+
+Wichtige Klassen:
+
+- **LMSApplication:** Startet die JavaFX-Anwendung.
+- **SceneManager:** Verwaltet den Wechsel zwischen den verschiedenen Fenstern.
+- **LoginController:** Verarbeitet die Benutzeranmeldung.
+- **RegisterController:** Verarbeitet die Registrierung.
+- **CourseOverviewController:** Zeigt die verfügbaren Kurse an.
+- **CourseDetailController:** Zeigt Kursdetails, Lektionen, Bewertungen und den Lernfortschritt an.
+
+### 2.5 Datenbank
+
+Als Datenbank wird PostgreSQL verwendet. Die Verbindung erfolgt über JDBC.
+
+Die wichtigsten Tabellen sind:
+
+- `users`
+- `students`
+- `instructors`
+- `courses`
+- `lessons`
+- `enrollments`
+- `lesson_progress`
+
+Die Beziehungen zwischen den Tabellen werden über Primary Keys und Foreign Keys sichergestellt.
+
+### 2.6 Architektur
+
+Die Anwendung verwendet eine mehrschichtige Architektur:
+
+**JavaFX Controller → Manager → DAO → JDBC → PostgreSQL**
+
+Dadurch sind die grafische Oberfläche, die Geschäftslogik und der Datenbankzugriff voneinander getrennt. Änderungen an einer Schicht können so vorgenommen werden, ohne die gesamte Anwendung anpassen zu müssen.
+
+## 3. Starten und Benutzen der Anwendung
+
+### 3.1 Voraussetzungen
+
+Für die Ausführung werden benötigt:
+
+- Java JDK 17
+- Apache Maven
+- PostgreSQL
+- Eine konfigurierte Datenbank namens `lms_db`
+
+### 3.2 Datenbank konfigurieren
+
+Zuerst muss PostgreSQL gestartet und die Datenbank erstellt werden:
+
+```sql
+CREATE DATABASE lms_db;
+```
+
+Anschließend müssen die Zugangsdaten in der Klasse `DatabaseConnection` angepasst werden:
+
+```java
+private static final String URL =
+    "jdbc:postgresql://localhost:5432/lms_db";
+
+private static final String USER = "postgres";
+private static final String PASSWORD = "dein_passwort";
+```
+
+Die Tabellen werden beim Start durch die Datenbankinitialisierung erstellt, sofern diese entsprechend eingerichtet ist.
+
+### 3.3 Anwendung starten
+
+Das Projekt wird im Terminal geöffnet. Anschließend kann die Anwendung mit Maven gestartet werden:
+
+```bash
+mvn clean javafx:run
+```
+
+### 3.4 Anwendung benutzen
+
+1. Nach dem Start erscheint der Startbildschirm.
+2. Ein neuer Benutzer kann sich über die Registrierungsfunktion registrieren.
+3. Ein bestehender Benutzer kann sich über den Login anmelden.
+4. Nach erfolgreicher Anmeldung wird die Kursübersicht angezeigt.
+5. In der Kursübersicht können Kurse gesucht und gefiltert werden.
+6. Durch Auswahl eines Kurses können die Kursdetails und Lektionen angezeigt werden.
+7. Studenten können sich für einen Kurs anmelden.
+8. Nach der Anmeldung können sie Lektionen als abgeschlossen markieren und ihren Lernfortschritt verfolgen.
+9. Studenten können den Kurs bewerten.
+10. Über die Logout-Funktion kann sich der Benutzer abmelden.
+
+## 4. Herausforderungen und Lösungen
+
+Während der Entwicklung sind verschiedene Herausforderungen aufgetreten.
+
+### 4.1 Verbindung zwischen Java und PostgreSQL
+
+Eine Herausforderung war die Verbindung der Java-Anwendung mit der PostgreSQL-Datenbank.
+
+**Lösung:**  
+Die Datenbankverbindung wurde in einer eigenen Klasse `DatabaseConnection` zentralisiert. Für die Datenbankoperationen wurde JDBC verwendet. Dadurch konnte der Datenbankzugriff einheitlich umgesetzt werden.
+
+### 4.2 Objektorientierte Datenbankstruktur
+
+Eine weitere Herausforderung war die Abbildung der objektorientierten Klassen auf relationale Datenbanktabellen. Beispielsweise besitzt ein Kurs mehrere Lektionen und ein Student kann mehrere Kurse besuchen.
+
+**Lösung:**  
+Die Beziehungen wurden mithilfe von Primary Keys und Foreign Keys in PostgreSQL umgesetzt. Die DAO-Klassen laden die zugehörigen Objekte bei Bedarf aus der Datenbank.
+
+### 4.3 JavaFX und Maven
+
+Beim Starten der Anwendung über die direkte Run-Funktion von VS Code trat ein Fehler auf, dass die JavaFX Runtime Components fehlen.
+
+**Lösung:**  
+Die JavaFX-Abhängigkeiten und das JavaFX-Maven-Plugin wurden in der `pom.xml` konfiguriert. Seitdem wird die Anwendung über `mvn clean javafx:run` gestartet.
+
+### 4.4 Fortschrittsverfolgung
+
+Eine Herausforderung war die Verknüpfung der Lektionen mit dem individuellen Lernfortschritt eines Studenten.
+
+**Lösung:**  
+Dafür wurde die Tabelle `lesson_progress` eingeführt. Sie speichert für jede Kombination aus Kursanmeldung und Lektion, ob diese abgeschlossen wurde. Der Gesamtfortschritt wird anhand der abgeschlossenen und gesamten Lektionen berechnet.
+
+### 4.5 Backup und Restore
+
+Beim Exportieren der Daten im JSON-Format trat ein Problem mit dem Datentyp `LocalDate` auf, da Jackson diesen Datentyp nicht standardmäßig unterstützt.
+
+**Lösung:**  
+Das Jackson-Modul `jackson-datatype-jsr310` wurde hinzugefügt und mit dem `ObjectMapper` registriert. Dadurch können Datumswerte korrekt exportiert und wieder importiert werden.
+
+### 4.6 Trennung der Verantwortlichkeiten
+
+Zu Beginn war es wichtig, die Datenbankoperationen, Geschäftslogik und grafische Oberfläche sinnvoll voneinander zu trennen.
+
+**Lösung:**  
+Die Anwendung wurde in Controller-, Manager-, DAO- und Model-Klassen aufgeteilt. Dadurch ist der Code übersichtlicher und einfacher zu warten.
+
+## 5. Fazit
+
+Im Rahmen dieses Projekts wurde ein einfaches Learning Management System mit Java entwickelt. Dabei wurden wichtige Konzepte der objektorientierten Programmierung, Datenbankanbindung mit JDBC, grafischen Oberflächen mit JavaFX und der Softwarearchitektur umgesetzt.
+
+Besonders hilfreich war die Trennung zwischen GUI, Geschäftslogik und Datenbankzugriff. Dadurch konnte die Anwendung schrittweise erweitert werden.
+
+Das Projekt bietet eine Grundlage für ein umfangreicheres Learning Management System, das in Zukunft beispielsweise um automatische Benachrichtigungen, eine erweiterte Session-Verwaltung und zusätzliche Verwaltungsfunktionen erweitert werden könnte.

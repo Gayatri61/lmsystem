@@ -1,0 +1,211 @@
+# Project Documentation – Learning Management System (LMS)
+
+**Project:** Learning Management System (LMS)  
+**Technologies:** Java 17, JavaFX, Maven, PostgreSQL and JDBC
+
+## 1. Overview of the Main Features
+
+The Learning Management System (LMS) is a desktop application that allows students and instructors to manage and access online courses.
+
+The main features of the application are:
+
+- **User Management:** Students and instructors can register and log in.
+- **Course Management:** Courses can be created, displayed and filtered according to different criteria.
+- **Course Search:** Users can search for available courses.
+- **Course Details:** Students can view course information and associated lessons.
+- **Course Enrollment:** Students can enroll in courses and cancel their enrollment.
+- **Progress Tracking:** Students can mark lessons as completed and track their overall course progress.
+- **Rating System:** Students can rate courses from 1 to 5 stars. The average rating of each course is also calculated.
+- **Database Management:** Important application data is stored in a PostgreSQL database.
+- **Backup and Restore:** Data can be exported in JSON format and imported again later.
+- **User Session:** The application provides basic management of the currently logged-in user and supports logout functionality.
+
+## 2. Code Structure and Important Classes
+
+The application was developed using object-oriented programming principles. The source code is divided into different packages to separate individual responsibilities.
+
+### 2.1 Model
+
+The Model package contains the main data classes of the application.
+
+- **User:** Abstract base class for all users. Contains common properties such as ID, name and email address.
+- **Student:** Represents a student.
+- **Instructor:** Represents an instructor and additionally contains a specialization.
+- **Course:** Contains course information such as title, description, instructor, category, difficulty level, price and lessons.
+- **Lesson:** Represents an individual lesson belonging to a course.
+- **Enrollment:** Connects a student with a course and stores information such as enrollment date and rating.
+- **LessonProgress:** Stores whether a particular lesson has been completed.
+
+### 2.2 DAO (Data Access Object)
+
+The DAO package is responsible for database access. JDBC is used for communication with the database.
+
+Examples:
+
+- **UserDAO:** Creates and retrieves users from the database.
+- **CourseDAO:** Manages courses and retrieves their associated lessons.
+- **EnrollmentDAO:** Manages course enrollments and ratings.
+
+The DAO classes execute SQL queries and use PreparedStatements to safely pass data to the database.
+
+### 2.3 Manager
+
+The Manager classes contain the business logic of the application and connect the controllers with the DAO classes.
+
+Examples:
+
+- **UserManager:** Manages users and checks, for example, whether an email address is already registered.
+- **CourseManager:** Manages courses and implements course search and filtering.
+- **EnrollmentManager:** Manages course enrollments, ratings and learning progress.
+- **SessionManager:** Stores information about the currently logged-in user and provides logout functionality.
+
+### 2.4 GUI (Graphical User Interface)
+
+The graphical user interface was developed using JavaFX and FXML.
+
+Important classes:
+
+- **LMSApplication:** Starts the JavaFX application.
+- **SceneManager:** Manages navigation between different application screens.
+- **LoginController:** Handles user login.
+- **RegisterController:** Handles user registration.
+- **CourseOverviewController:** Displays the available courses.
+- **CourseDetailController:** Displays course details, lessons, ratings and learning progress.
+
+### 2.5 Database
+
+PostgreSQL is used as the database. Database communication is implemented using JDBC.
+
+The main database tables are:
+
+- `users`
+- `students`
+- `instructors`
+- `courses`
+- `lessons`
+- `enrollments`
+- `lesson_progress`
+
+Relationships between the tables are maintained using primary keys and foreign keys.
+
+### 2.6 Application Architecture
+
+The application uses a layered architecture:
+
+**JavaFX Controller → Manager → DAO → JDBC → PostgreSQL**
+
+This architecture separates the graphical user interface, business logic and database access. As a result, individual layers can be modified without requiring changes throughout the entire application.
+
+## 3. Starting and Using the Application
+
+### 3.1 Requirements
+
+The following software is required to run the application:
+
+- Java JDK 17
+- Apache Maven
+- PostgreSQL
+- A configured database named `lms_db`
+
+### 3.2 Database Configuration
+
+First, start PostgreSQL and create the database:
+
+```sql
+CREATE DATABASE lms_db;
+```
+
+Next, configure the database credentials in the `DatabaseConnection` class:
+
+```java
+private static final String URL =
+    "jdbc:postgresql://localhost:5432/lms_db";
+
+private static final String USER = "postgres";
+private static final String PASSWORD = "your_password";
+```
+
+The database tables are created during application initialization, provided the database initialization is configured accordingly.
+
+### 3.3 Starting the Application
+
+Open the project in a terminal and execute the following Maven command:
+
+```bash
+mvn clean javafx:run
+```
+
+### 3.4 Using the Application
+
+1. After starting the application, the start screen is displayed.
+2. New users can register using the registration function.
+3. Existing users can log in.
+4. After successful login, the course overview is displayed.
+5. Users can search for courses and filter them according to different criteria.
+6. By selecting a course, users can view its details and lessons.
+7. Students can enroll in a course.
+8. After enrollment, students can mark lessons as completed and track their learning progress.
+9. Students can rate courses.
+10. Users can log out using the logout function.
+
+## 4. Challenges and Solutions
+
+During development, several challenges occurred.
+
+### 4.1 Connecting Java to PostgreSQL
+
+One challenge was establishing a connection between the Java application and the PostgreSQL database.
+
+**Solution:**
+
+The database connection was centralized in a separate `DatabaseConnection` class. JDBC was used for database operations. This provided a consistent way to access the database throughout the application.
+
+### 4.2 Object-Oriented Database Structure
+
+Another challenge was mapping object-oriented Java classes to relational database tables. For example, a course can contain multiple lessons, and a student can enroll in multiple courses.
+
+**Solution:**
+
+Relationships were implemented using primary keys and foreign keys in PostgreSQL. The DAO classes retrieve related objects from the database when needed.
+
+### 4.3 JavaFX and Maven
+
+When starting the application directly using the VS Code Run function, an error occurred stating that the JavaFX runtime components were missing.
+
+**Solution:**
+
+The JavaFX dependencies and JavaFX Maven plugin were configured in the `pom.xml` file. The application can now be started using `mvn clean javafx:run`.
+
+### 4.4 Progress Tracking
+
+A challenge was connecting individual lessons with the learning progress of each student.
+
+**Solution:**
+
+The `lesson_progress` table was introduced. It stores whether a lesson has been completed for a particular course enrollment. The overall course progress is calculated using the number of completed lessons divided by the total number of lessons.
+
+### 4.5 Backup and Restore
+
+During JSON export, a problem occurred because Jackson does not support the Java `LocalDate` data type by default.
+
+**Solution:**
+
+The `jackson-datatype-jsr310` module was added and registered with the `ObjectMapper`. This allows date values to be exported and imported correctly.
+
+### 4.6 Separation of Responsibilities
+
+Another important challenge was separating database operations, business logic and the graphical user interface.
+
+**Solution:**
+
+The application was divided into Controller, Manager, DAO and Model classes. This makes the code easier to understand, maintain and extend.
+
+## 5. Conclusion
+
+As part of this project, a basic Learning Management System was developed using Java.
+
+The project demonstrates important concepts of object-oriented programming, database integration using JDBC, graphical user interfaces with JavaFX and layered software architecture.
+
+The separation between the GUI, business logic and database access was particularly useful during development. It allowed the application to be extended step by step.
+
+The project provides a foundation for a more comprehensive Learning Management System that could be extended in the future with features such as automatic notifications, advanced session management and additional administration functions.

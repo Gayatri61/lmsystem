@@ -43,7 +43,7 @@ public void shouldFindCourseByTitleUsingRegex()
 
     assertTrue(
             results.stream()
-                    .anyMatch(c -> c.getId() == 100)
+                    .anyMatch(c -> c.getTitle().equals("Java Grundlagen"))
     );
 }   
 
@@ -72,11 +72,11 @@ public void shouldFindCourseByDescription()
     manager.addCourse(course);
 
     List<Course> results =
-            manager.searchCourses("Java");
+            manager.searchCourses("Spring Boot");
 
     assertTrue(
             results.stream()
-                    .anyMatch(c -> c.getId() == 101)
+                    .anyMatch(c -> c.getTitle().equals("Spring Boot"))
     );
 }
     
