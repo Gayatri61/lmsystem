@@ -68,4 +68,29 @@ public class UserManagerTest {
 
         assertNull(result);
     }
+
+    @Test
+    public void userCanBeFoundByEmail() throws LMSException {
+
+        UserManager manager = UserManager.getInstance();
+
+        Student student = new Student(
+                0,
+                "Lisa",
+                "lisa_find_test@test.de"
+        );
+
+        // Add user
+        manager.addUser(student);
+
+        // Find user by email
+        User result = manager.findUserByEmail("lisa_find_test@test.de");
+
+        assertNotNull(result);
+        assertEquals("Lisa", result.getName());
+        assertEquals("lisa_find_test@test.de", result.getEmail());
+
+        // Cleanup
+        manager.removeUser(result.getId());
+    }
 }
